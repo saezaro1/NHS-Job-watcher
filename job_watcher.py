@@ -17,19 +17,48 @@ import os
 from datetime import datetime, timezone
 from html import escape
 
-# Job titles are matched against these (case-insensitive substring match).
-# Add or remove keywords to widen/narrow what counts as a match.
-KEYWORDS = [
-    "locally employed",
-    "led (",
-    "fy1",
-    "fy2",
-    "foundation year",
-    "foundation programme",
-    "trust grade",
-    "trust doctor",
-    "trust junior doctor",
+# Titles that explicitly refer to a COMBINED FY1-FY2 style programme -
+# e.g. "Locally Employed Doctor (FY1-FY2 equivalent)". This is the specific
+# thing being looked for: a single rotational programme spanning both years,
+# not a standalone FY1-only or FY2-only post.
+COMBINED_PATTERNS = [
+    "fy1-fy2", "fy1/fy2", "fy1 & fy2", "fy1&fy2", "fy1-2", "fy1/2",
+    "fy1 and fy2", "fy1&2", "fy1 2 equivalent",
 ]
+
+# Other strong signals of a structured, foundation-emulating LED programme,
+# even when the title doesn't literally spell out "FY1" and "FY2" together -
+# e.g. a trust's page describing its own rotational scheme in these terms.
+PROGRAMME_KEYWORDS = [
+    "locally employed doctor",
+    "led foundation",
+    "foundation equivalent",
+    "foundation programme",
+    "rotational foundation",
+]
+
+
+def matches_keywords(text):
+    text_lower = text.lower()
+
+    # Explicit combined-notation title (FY1-FY2, FY1/FY2, FY1-2, etc.)
+    if any(pat in text_lower for pat in COMBINED_PATTERNS):
+        return True
+
+    # Both years mentioned somewhere in the title, even without a
+    # hyphen/slash between them (e.g. "FY1 and FY2 rotational post").
+    if "fy1" in text_lower and "fy2" in text_lower:
+        return True
+
+    # Other strong "structured programme" language, even without FY1/FY2
+    # spelled out explicitly.
+    if any(kw in text_lower for kw in PROGRAMME_KEYWORDS):
+        return True
+
+    # Deliberately NOT matching on a bare standalone "fy1" or "fy2" alone -
+    # that would catch single-year, single-specialty posts too, which is
+    # not what's being looked for here.
+    return False
 
 # jobclerk.com is the most reliable source here - it's a dedicated FY1/FY2
 # job tracker and its page structure is simple and consistent.
@@ -60,11 +89,6 @@ def load_state():
 def save_state(state):
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2)
-
-
-def matches_keywords(text):
-    text_lower = text.lower()
-    return any(kw in text_lower for kw in KEYWORDS)
 
 
 def scrape_jobclerk(url):
