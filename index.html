@@ -6,10 +6,85 @@
 <title>NHS Job Watcher</title>
 <style>
   body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }
+  h1 { font-size: 1.4em; }
+  .meta { color: #666; font-size: 0.9em; margin-bottom: 24px; }
+  .job { border: 1px solid #ddd; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; position: relative; }
+  .job a { font-weight: 600; text-decoration: none; color: #1554d8; }
+  .job a:hover { text-decoration: underline; }
+  .source { color: #666; font-size: 0.85em; margin-top: 4px; }
+  .new-badge { display: none; position: absolute; top: 10px; right: 12px; background: #d92b2b; color: white; font-size: 0.7em; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+  .job.is-new .new-badge { display: inline-block; }
+  .refresh-note { margin-top: 24px; font-size: 0.85em; color: #888; }
 </style>
 </head>
 <body>
 <h1>NHS Foundation / LED Job Watcher</h1>
-<p>This page hasn't run yet. Once the GitHub Action runs for the first time (see the README), this will fill in with the current matching job postings.</p>
+<div class="meta">Last checked: 2026-08-26 12:14 UTC &middot; Checks run automatically every hour.</div>
+<div id="jobs">
+
+        <div class="job" data-key="Trust Grade (ST1/2 Level) Doctor in Paediatrics and NeonatesUnited Lincolnshire Hospitals NHS Trust- Pilgrim HospitalCloses09 Sep 2026|JobClerk - FY1 roles">
+          <span class="new-badge">NEW</span>
+          <a href="https://www.jobclerk.com/job/trust-grade-st12-level-doctor-in-paediatrics-and-neonates/70dcd5e5-c659-435d-bf20-a291b75a85b5" target="_blank" rel="noopener">Trust Grade (ST1/2 Level) Doctor in Paediatrics and NeonatesUnited Lincolnshire Hospitals NHS Trust- Pilgrim HospitalCloses09 Sep 2026</a>
+          <div class="source">JobClerk - FY1 roles</div>
+        </div>
+
+        <div class="job" data-key="Trust Doctor - DermatologyRoyal Devon University Healthcare NHS Foundation Trust- Royal Devon University Healthcare NHS Foundation Trust, Exeter, Devon, EX2 5DW, United KingdomCloses08 Sep 2026|JobClerk - FY1 roles">
+          <span class="new-badge">NEW</span>
+          <a href="https://www.jobclerk.com/job/trust-doctor-dermatology/eb3cbbf1-9877-4ebb-bc40-03ae1bd480a9" target="_blank" rel="noopener">Trust Doctor - DermatologyRoyal Devon University Healthcare NHS Foundation Trust- Royal Devon University Healthcare NHS Foundation Trust, Exeter, Devon, EX2 5DW, United KingdomCloses08 Sep 2026</a>
+          <div class="source">JobClerk - FY1 roles</div>
+        </div>
+
+        <div class="job" data-key="Bank FY2 - AMU EDMid and South Essex NHS Foundation Trust- Mid and South Essex TrustCloses03 Sep 2026|JobClerk - FY1 roles">
+          <span class="new-badge">NEW</span>
+          <a href="https://www.jobclerk.com/job/bank-fy2-amu-ed/694ff99a-b46d-4ad0-b8f7-765fb50f2200" target="_blank" rel="noopener">Bank FY2 - AMU EDMid and South Essex NHS Foundation Trust- Mid and South Essex TrustCloses03 Sep 2026</a>
+          <div class="source">JobClerk - FY1 roles</div>
+        </div>
+
+        <div class="job" data-key="Trust Grade (ST1/2 Level) Doctor in Paediatrics and NeonatesUnited Lincolnshire Hospitals NHS Trust- Pilgrim HospitalCloses09 Sep 2026|JobClerk - FY2 roles">
+          <span class="new-badge">NEW</span>
+          <a href="https://www.jobclerk.com/job/trust-grade-st12-level-doctor-in-paediatrics-and-neonates/70dcd5e5-c659-435d-bf20-a291b75a85b5" target="_blank" rel="noopener">Trust Grade (ST1/2 Level) Doctor in Paediatrics and NeonatesUnited Lincolnshire Hospitals NHS Trust- Pilgrim HospitalCloses09 Sep 2026</a>
+          <div class="source">JobClerk - FY2 roles</div>
+        </div>
+
+        <div class="job" data-key="Trust Doctor - DermatologyRoyal Devon University Healthcare NHS Foundation Trust- Royal Devon University Healthcare NHS Foundation Trust, Exeter, Devon, EX2 5DW, United KingdomCloses08 Sep 2026|JobClerk - FY2 roles">
+          <span class="new-badge">NEW</span>
+          <a href="https://www.jobclerk.com/job/trust-doctor-dermatology/eb3cbbf1-9877-4ebb-bc40-03ae1bd480a9" target="_blank" rel="noopener">Trust Doctor - DermatologyRoyal Devon University Healthcare NHS Foundation Trust- Royal Devon University Healthcare NHS Foundation Trust, Exeter, Devon, EX2 5DW, United KingdomCloses08 Sep 2026</a>
+          <div class="source">JobClerk - FY2 roles</div>
+        </div>
+
+        <div class="job" data-key="Bank FY2 - AMU EDMid and South Essex NHS Foundation Trust- Mid and South Essex TrustCloses03 Sep 2026|JobClerk - FY2 roles">
+          <span class="new-badge">NEW</span>
+          <a href="https://www.jobclerk.com/job/bank-fy2-amu-ed/694ff99a-b46d-4ad0-b8f7-765fb50f2200" target="_blank" rel="noopener">Bank FY2 - AMU EDMid and South Essex NHS Foundation Trust- Mid and South Essex TrustCloses03 Sep 2026</a>
+          <div class="source">JobClerk - FY2 roles</div>
+        </div>
+</div>
+<p class="refresh-note">This page updates itself automatically. Refresh anytime to get the latest check - you don't need to keep this tab open for the checking to happen, that runs on GitHub's servers regardless.</p>
+
+<script>
+// Marks jobs as NEW if you haven't seen them on this device before, using
+// this browser's own localStorage. This is plain browser storage on a
+// static webpage - separate from anything else.
+(function() {
+  const seenKey = 'nhs_job_watcher_seen';
+  let seen = JSON.parse(localStorage.getItem(seenKey) || '[]');
+  const seenSet = new Set(seen);
+  const jobEls = document.querySelectorAll('.job');
+  let newCount = 0;
+  jobEls.forEach(function(el) {
+    const key = el.getAttribute('data-key');
+    if (!seenSet.has(key)) {
+      el.classList.add('is-new');
+      newCount++;
+    }
+  });
+  // Mark everything currently shown as seen for next time.
+  const allKeys = Array.from(jobEls).map(function(el) { return el.getAttribute('data-key'); });
+  localStorage.setItem(seenKey, JSON.stringify(allKeys));
+
+  if (newCount > 0) {
+    document.title = '(' + newCount + ' new) NHS Job Watcher';
+  }
+})();
+</script>
 </body>
 </html>
