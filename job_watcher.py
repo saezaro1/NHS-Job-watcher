@@ -61,17 +61,45 @@ def matches_keywords(text):
     return False
 
 # jobclerk.com is the most reliable source here - it's a dedicated FY1/FY2
-# job tracker and its page structure is simple and consistent.
-# The named trust pages are best-effort: NHS trust career sites vary a lot in
-# structure, and this generic scraper may need small tweaks per site if it
-# comes back empty. See the README for how to debug that.
+# job tracker and its page structure is simple and consistent, confirmed
+# working for both the general FY1/FY2 hub pages and the one employer page
+# (Chelsea and Westminster) actually fetched and checked earlier.
+#
+# The named trust pages are a mix of confidence levels - see the comment
+# on each one. None of the "generic" ones were scraped and verified here,
+# only found via search results describing what's on the page.
 SOURCES = [
     {"name": "JobClerk - FY1 roles", "url": "https://www.jobclerk.com/jobs/fy1", "type": "jobclerk"},
     {"name": "JobClerk - FY2 roles", "url": "https://www.jobclerk.com/jobs/fy2", "type": "jobclerk"},
+
+    # Confirmed structured FY1-FY2 rotational LED programmes
     {"name": "Shrewsbury and Telford", "url": "https://www.jobs.sath.nhs.uk/find-job/doctors", "type": "generic"},
     {"name": "Derby and Burton", "url": "https://www.uhdb.nhs.uk/current-jobs/", "type": "generic"},
     {"name": "Mid and South Essex", "url": "https://www.mse.nhs.uk/join-our-team/current-vacancies/", "type": "generic"},
     {"name": "East Sussex Healthcare", "url": "https://www.esht.nhs.uk/join-our-team/", "type": "generic"},
+
+    # London North West University Healthcare (Northwick Park) - this exact
+    # URL was actually fetched and returned real job listings earlier, so
+    # reasonably confident in this one.
+    {"name": "London North West Healthcare (Northwick Park)", "url": "https://www.nhsjobs.com/employerdetails/73/mir26/mar1/London_North_West_University_Healthcare_NHS_Trust", "type": "generic"},
+
+    # University Hospitals Birmingham - confirmed they run a formal LED
+    # programme with a dedicated handbook, but this specific jobs URL is
+    # a guess based on the standard jobs.[trust].nhs.uk pattern, not
+    # individually confirmed.
+    {"name": "University Hospitals Birmingham", "url": "https://jobs.uhb.nhs.uk", "type": "generic"},
+
+    # These five use jobclerk.com's employer-specific pages, same reliable
+    # page structure as the FY1/FY2 hub above. Only the Chelsea and
+    # Westminster URL was individually confirmed working - the other four
+    # slugs are inferred from that pattern and may 404 if the exact naming
+    # differs, in which case that source will just quietly return 0 results
+    # rather than error out.
+    {"name": "Chelsea and Westminster", "url": "https://www.jobclerk.com/employer/chelsea-and-westminster-hospital-nhs-foundation-trust/jobs", "type": "jobclerk"},
+    {"name": "Manchester University NHS FT", "url": "https://www.jobclerk.com/employer/manchester-university-nhs-foundation-trust/jobs", "type": "jobclerk"},
+    {"name": "Epsom and St Helier", "url": "https://www.jobclerk.com/employer/epsom-and-st-helier-university-hospitals-nhs-trust/jobs", "type": "jobclerk"},
+    {"name": "North Bristol", "url": "https://www.jobclerk.com/employer/north-bristol-nhs-trust/jobs", "type": "jobclerk"},
+    {"name": "Bedfordshire Hospitals (Luton and Dunstable)", "url": "https://www.jobclerk.com/employer/bedfordshire-hospitals-nhs-foundation-trust/jobs", "type": "jobclerk"},
 ]
 
 STATE_FILE = "seen_jobs.json"
